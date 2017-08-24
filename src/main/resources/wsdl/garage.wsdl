@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<wsdl:definitions name="Garage"
+                  targetNamespace="http://acme.com/services/garage"
+                  xmlns:tns="http://acme.com/services/garage"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:types="http://acme.com/types/garage"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns="http://www.w3.org/2001/XMLSchema">
+
+    <wsdl:types>
+        <xsd:schema
+                    elementFormDefault="qualified"
+                    targetNamespace="http://acme.com/types/garage"
+                    xmlns="http://acme.com/types/garage">
+
+            <xsd:element name="delivery">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="vehicle" type="vehicle" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:complexType name="car">
+                <xsd:complexContent mixed="false">
+                    <xsd:extension base="vehicle">
+                        <xsd:sequence>
+                            <xsd:element name="trunkContents" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:extension>
+                </xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="truck">
+                <xsd:complexContent mixed="false">
+                    <xsd:extension base="vehicle">
+                        <xsd:sequence>
+                            <xsd:element name="cabContents" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:extension>
+                </xsd:complexContent>
+            </xsd:complexType>
+
+            <xsd:complexType name="vehicle" abstract="true">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="vin" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:element name="result">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="result" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="DeliveryInput">
+        <wsdl:part name="delivery" element="types:delivery"/>
+    </wsdl:message>
+
+    <wsdl:message name="DeliveryOutput">
+        <wsdl:part name="result" element="types:result"/>
+    </wsdl:message>
+
+    <wsdl:portType name="Delivery_PortType">
+        <wsdl:operation name="performDelivery">
+            <wsdl:input message="tns:DeliveryInput"/>
+            <wsdl:output message="tns:DeliveryOutput"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="Delivery_SoapBinding" type="tns:Delivery_PortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="performDelivery">
+            <soap:operation
+                    soapAction="http://acme.com/services/garage/performDelivery"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="Delivery_Service">
+        <wsdl:documentation>Delivery service</wsdl:documentation>
+        <wsdl:port name="Delivery_Port" binding="tns:Delivery_SoapBinding">
+            <soap:address location="http://localhost:9090/acme/service/garage"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

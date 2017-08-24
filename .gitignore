@@ -1,0 +1,11 @@
+*.class
+*.jar
+*.iml
+.idea/*
+target/*
+/target/
+/.classpath
+/.project
+/config
+/logs
+/release.properties
